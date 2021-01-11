@@ -1,0 +1,13 @@
+Links to data:
+
+* real GDP growth rate (IMF): https://stats.oecd.org/index.aspx?queryid=350#
+
+* inflation – HICP - All-items excluding energy and food (ECB): https://sdw.ecb.europa.eu/quickview.do?org.apache.struts.taglib.html.TOKEN=948cf5b2db6c9308e4865c7046322bc1&SERIES_KEY=122.ICP.M.U2.N.XEF000.4.ANR&start=&end=&submitOptions.x=0&submitOptions.y=0&trans=QF
+
+* shadow rate (Quandl): https://www.quandl.com/data/SHADOWS/EUROPE-European-Central-Bank-Shadow-Rate
+
+* MRR (ECB): https://sdw.ecb.europa.eu/quickview.do?org.apache.struts.taglib.html.TOKEN=bdcdc62337634fb4116b69d575c53788&SERIES_KEY=143.FM.B.U2.EUR.4F.KR.MRR_FR.LEV&start=&end=&submitOptions.x=0&submitOptions.y=0&trans=QF
+
+* lending standards (ECB): 
+
+* lending margins (ECB): https://sdw.ecb.europa.eu/browseTable.do?org.apache.struts.taglib.html.TOKEN=b08cf61c88ce8bb0e9b47bebc9086f47&df=true&ec=&dc=&oc=&pb=&rc=&DATASET=0&removeItem=&removedItemList=&mergeFilter=&activeTab=RAI&showHide=&DD_ECON_CONCEPT.239=LMGBLNFCH&CURRENCY_TRANS.239=EUR&MAX_DOWNLOAD_SERIES=500&SERIES_MAX_NUM=50&node=9691558
