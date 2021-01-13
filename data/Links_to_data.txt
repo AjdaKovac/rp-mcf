@@ -8,6 +8,6 @@ Links to data:
 
 * MRR (ECB): https://sdw.ecb.europa.eu/quickview.do?org.apache.struts.taglib.html.TOKEN=bdcdc62337634fb4116b69d575c53788&SERIES_KEY=143.FM.B.U2.EUR.4F.KR.MRR_FR.LEV&start=&end=&submitOptions.x=0&submitOptions.y=0&trans=QF
 
-* lending standards (ECB): 
+* lending standards (ECB): https://sdw.ecb.europa.eu/quickview.do?SERIES_KEY=258.BLS.Q.U2.ALL.O.E.Z.B3.ST.S.BWFNET
 
 * lending margins (ECB): https://sdw.ecb.europa.eu/browseTable.do?org.apache.struts.taglib.html.TOKEN=b08cf61c88ce8bb0e9b47bebc9086f47&df=true&ec=&dc=&oc=&pb=&rc=&DATASET=0&removeItem=&removedItemList=&mergeFilter=&activeTab=RAI&showHide=&DD_ECON_CONCEPT.239=LMGBLNFCH&CURRENCY_TRANS.239=EUR&MAX_DOWNLOAD_SERIES=500&SERIES_MAX_NUM=50&node=9691558
