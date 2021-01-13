@@ -1,7 +1,15 @@
 ### R&P MCF project
 
-A short summary of what has to be done:
+Project so far:
 
-* collect relevant data, add in folder "data"
-* literature: there is a folder "summaries" where we can summarise relevant articles that are in "literature"
-* code: will follow after we collect data
+* data✅
+* literature✅
+* code✅
+
+
+What has yet to be done:
+
+* plots: (1) bootstrapping to create confidence bands to IRFs
+            (2) normalise vertical axis units to percentegaes
+            (3) prettify with GG plots
+* add additional variable (credit risk, other?)
