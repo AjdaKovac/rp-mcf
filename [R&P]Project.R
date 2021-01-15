@@ -5,7 +5,7 @@ library(urca)
 install.packages("ggplot2")
 library(ggplot2)
 
-setwd("~/Desktop/WU/Master/3_WS2020:21/R&P - Money, Credit and Finance/02_Research Project")
+setwd("~/Desktop/WU/Master/3_WS2020:21/Data Science and Machine Learning/Github/rp-mcf")
 
 library(readxl)
 data1 <- read_excel("data.xlsx")
@@ -130,12 +130,12 @@ C
 ############################################### VAR-system
 
 ### select lags
-x1 <- VARselect(x, lag.max = 8, type = "const")
+x1 <- VARselect(x, lag.max = 16, type = "const")
 VARselect(x) 
 x1$selection # p=8 lags according to AIC as well as HQ
 
 
-VAR_1 <- VAR(x, p = 1, type = "trend", season = NULL, exog = NULL) #VAR
+VAR_1 <- VAR(x, p = 2, type = "trend", season = NULL, exog = NULL) #VAR
 as.matrix(Bcoef(VAR_1))
 VAR_1$varresult
 summary(VAR_1) # this is for the whole timeperiod
