@@ -1,0 +1,60 @@
+https://sdw.ecb.europa.eu/datastructure.do?conceptMnemonic=BLS_ITEM&datasetinstanceid=258#cl
+
+Can proceed with either narrow (bank) extension or with broader (macro) extension. Would make sense to proceed with narrow (bank) extension as EU is a bank-based financial system.
+
+Narrow extension: alternative measures of bank system, can use also for robustness
+
+
+
+BLS variables:
+
+Liquidity variables:
+
+ALN, BLP, PLB: liquidity: really important measure, because even if lending, inflation and growth not increased, at least liquidity is injected into the system. Minimal effect we hope to see
+
+
+
+Broader macro variables:
+
+BFC, BFW, BICP, BIP: broader effect –> decrease financial stress in fianncial markets
+
+BLV: expansionary effect
+
+CCF: consumer confidence
+
+EABH: effect of policies –> gov bond holdings of banks. ECB did not directly buy gov bonds, but through LTRO it funded banks which proceeded to buy government bonds
+
+
+
+Credit risk:
+
+NPL: non-performing loans: direct measure of credit risk of banks, records credit losses. However, may appear with a lag as banks delay the declaration of such loans
+
+RSKL: regulatory vairable: capital positions according to Basel rules. Different degree of riskiness that banks hold, asset risk taking by banks. NLP shows up with a lag, wherease RSKL is more concurrent with easing of polices, looking at asset quality
+
+RWA: more comprehensive measure, otherwise similar to RSKL
+
+RSK: related to lending standards
+
+LTL: long-term loans: maturity differences. Could calculate LT loans/total loans and see if this ratio was affected. Could tell us something about risk-taking since LT loans are riskier (but earn higher return for the bank), however, given that LT interest rate was brought down due to UMP and the respective term premia were decreased, would still be interesting to see what happens to LT loans
+
+MRL: margin on riskier loans: if bank taken on more risk. If yields are reduced due to UMP, in search for higher rates, banks may increase the share of riskier loans
+
+
+
+Regulatory variables:
+
+We may want to look into the regulation for the structure of balance sheet of banks
+
+CAPR, CP: Capital ratio – capitalisation. Capital is the central pillar of bank regulation, policies aim at impacting capitalisation, captures in this way regulatory cahnges. We expect: regulatory loosening –> lower capitalisation, and vice versa
+
+LEVR: leverage ratio – unweighted capital ratio
+Useful because pre-2008, according to Basel 2 rules, banks "learned the game" and made their capital ratios look good (capital/assets)
+–> it is a regulatory variable
+–> less maniputalation prone
+–> drawback: not see different degrees of risk (different kinds of loans)
+–> measure of bank risk
+
+
+NIC, NICD: ST interest rate low –> lending margins reduce –> in response, banks increase their fees
+
