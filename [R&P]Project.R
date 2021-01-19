@@ -4,8 +4,10 @@ library(tseries)
 library(urca)
 install.packages("ggplot2")
 library(ggplot2)
+library(gsl)
 
-setwd("~/Desktop/WU/Master/3_WS2020:21/Data Science and Machine Learning/Github/rp-mcf")
+#setwd("~/Desktop/WU/Master/3_WS2020:21/Data Science and Machine Learning/Github/rp-mcf")
+setwd("~/Documents/Github/rp-mcf/data")   # Ajda /Users/ajdakovac/Documents ...
 
 library(readxl)
 data1 <- read_excel("data.xlsx")
