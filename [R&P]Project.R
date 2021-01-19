@@ -118,6 +118,7 @@ adf.test(deltalstandards) # => stationary now at 10% => I(1)
 #x<-cbind(deltay, deltai, deltalstandards, deltasr, deltalmargins) # is a covariance stationary process
 x<-cbind(deltay, deltai, deltasr, deltalstandards, deltalmargins)
 plot.ts(x, col="blue", main = "Covariance stationary vector x")
+#x <- base::scale(x, center = TRUE, scale = TRUE)
 
 
 ### probably not needed
@@ -155,7 +156,7 @@ x.serial <- serial.test(VAR_1, lags.pt = 12, type = "PT.asymptotic")
 x.serial
 
 ### Cholesky decomposition of the Variance covariance matrix to get matrix B
-install.packages("svars")
+#install.packages("svars")
 library(svars)
 B <- id.chol(VAR_1, order_k = c(1, 2, 3, 4, 5)) 
 B1 <- summary(B)
