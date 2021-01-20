@@ -214,6 +214,6 @@ x.serial2
 library(svars)
 B_ltl <- id.chol(VAR_2, order_k = c(1, 2, 3, 4, 5, 6)) 
 B2 <- summary(B_ltl)
-IRF <- irf(B_ltl, impulse = "deltasr", response= "deltag", n.ahead = 8, boot = TRUE, ortho = TRUE)
-plot(IRF)
+IRF2 <- irf(B_ltl, impulse = "y3", response = c("y1", "y2", "y4", "y5", "y6"), n.ahead = 8, boot = TRUE, ortho = TRUE, cumulative = TRUE, ci = TRUE)
+plot(IRF2)
 stargazer(B1)
