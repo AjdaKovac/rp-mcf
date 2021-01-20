@@ -217,3 +217,19 @@ B2 <- summary(B_ltl)
 IRF2 <- irf(B_ltl, impulse = "y3", response = c("y1", "y2", "y4", "y5", "y6"), n.ahead = 8, boot = TRUE, ortho = TRUE, cumulative = TRUE, ci = TRUE)
 plot(IRF2)
 stargazer(B1)
+
+
+test <- wild.boot( B_ltl,
+           design = "fixed",
+           distr = "rademacher", n.ahead = 8,
+           nboot = 500,
+           nc = 1,
+           dd = NULL,
+           signrest = NULL,
+           itermax = 300,
+           steptol = 200,
+           iter2 = 50,
+           rademacher = "deprecated"
+)
+
+plot(test, lowerq = 0.16, upperq = 0.84)
