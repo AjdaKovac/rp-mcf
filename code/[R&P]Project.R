@@ -150,7 +150,7 @@ plot.ts(x1, col="lightblue", main = "Covariance stationary vector x")
 
 
 ### model with ltl
-x2<-cbind(deltay, deltai, deltasr, deltalstandards, deltalmargins, deltaltl)
+x2<-cbind(deltay, deltai, deltasr, deltalstandards, deltaltl, deltalmargins)
 plot.ts(x2, col="lightblue", main = "Covariance stationary vector x")
 
 ############################################### VAR-system baseline model
