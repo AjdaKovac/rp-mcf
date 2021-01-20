@@ -2,12 +2,11 @@ rm(list=ls())
 library(vars)
 library(tseries)
 library(urca)
-install.packages("ggplot2")
 library(ggplot2)
 library(gsl)
 
-#setwd("~/Desktop/WU/Master/3_WS2020:21/Data Science and Machine Learning/Github/rp-mcf")
-setwd("~/Documents/Github/rp-mcf/data")   # Ajda /Users/ajdakovac/Documents ...
+setwd("~/Desktop/WU/Master/3_WS2020:21/Data Science and Machine Learning/Github/rp-mcf/data")
+#setwd("~/Documents/Github/rp-mcf/data")   # Ajda /Users/ajdakovac/Documents ...
 
 library(readxl)
 data1 <- read_excel("data.xlsx")
@@ -108,6 +107,16 @@ deltalmargins <- diff(lmargins)
 deltalstandards <- diff(lstandards)
 deltaltl <- diff(ltl)
 
+
+### normalize each series
+
+deltay <- base::scale(deltay, center = TRUE, scale = TRUE)
+deltai <- base::scale(deltai, center = TRUE, scale = TRUE)
+deltasr <- base::scale(deltasr, center = TRUE, scale = TRUE)
+deltalmargins <- base::scale(deltalmargins, center = TRUE, scale = TRUE)
+deltalstandards <- base::scale(deltalstandards, center = TRUE, scale = TRUE)
+deltaltl <- base::scale(deltaltl, center = TRUE, scale = TRUE)
+
 ### Y => first diff is stationary
 adf.test(deltay) ## => stationary now => I(1)
 pp.test(deltay) ## => stationary now => I(1)
@@ -134,29 +143,25 @@ adf.test(deltaltl) # => stationary now at 10% => I(1)
 ########################## Define vector x: specify order according to recursive identification scheme
 
 #x<-cbind(deltay, deltai, deltalstandards, deltasr, deltalmargins) # is a covariance stationary process
-x<-cbind(deltay, deltai, deltasr, deltalstandards, deltalmargins, deltaltl)
-plot.ts(x, col="blue", main = "Covariance stationary vector x")
-#x <- base::scale(x, center = TRUE, scale = TRUE)
+
+### baseline model
+x1<-cbind(deltay, deltai, deltasr, deltalstandards, deltalmargins)
+plot.ts(x1, col="lightblue", main = "Covariance stationary vector x")
 
 
-### probably not needed
-#C <- matrix(NA, nrow=6, ncol=6, dimnames=list(c("Y", "i", "p", "G", "U", "C"), c("Y", "i", "p", "G", "U", "C")))
+### model with ltl
+x2<-cbind(deltay, deltai, deltasr, deltalstandards, deltalmargins, deltaltl)
+plot.ts(x2, col="lightblue", main = "Covariance stationary vector x")
 
-#C[1,2] <- 0
-#C[1,3] <- 0
-#C[1,4] <- 0
-#C
+############################################### VAR-system baseline model
 
-
-############################################### VAR-system
-
-### select lags
+### select lags => won't work with stand. data => but not necessary as we choose 2
 x1 <- VARselect(x, lag.max = 16, type = "const")
 VARselect(x) 
 x1$selection # p=8 lags according to AIC as well as HQ   # upon adding ltl, p=7
 
 
-VAR_1 <- VAR(x, p = 2, type = "trend", season = NULL, exog = NULL) #VAR
+VAR_1 <- VAR(x1, p = 2, type = "trend", season = NULL, exog = NULL) #VAR
 as.matrix(Bcoef(VAR_1))
 VAR_1$varresult
 summary(VAR_1) # this is for the whole timeperiod
@@ -176,8 +181,39 @@ x.serial
 ### Cholesky decomposition of the Variance covariance matrix to get matrix B
 #install.packages("svars")
 library(svars)
-B <- id.chol(VAR_1, order_k = c(1, 2, 3, 4, 5, 6)) 
+B <- id.chol(VAR_1, order_k = c(1, 2, 3, 4, 5)) 
 B1 <- summary(B)
 IRF <- irf(B, impulse = "deltasr", response= "deltag", n.ahead = 8, boot = TRUE, ortho = TRUE)
+plot(IRF)
+stargazer(B1)
+
+
+
+
+############################################### VAR-system second model
+
+VAR_2 <- VAR(x2, p = 2, type = "trend", season = NULL, exog = NULL) #VAR
+as.matrix(Bcoef(VAR_2))
+VAR_2$varresult
+summary(VAR_2) # this is for the whole timeperiod
+
+plot.ts(resid(VAR_2))
+
+
+### test for stability:
+max(roots(VAR_2)) # max eigenvalue < 1 which implies that our system is stable and stationary!
+
+normality.test(VAR_2)
+
+
+x.serial2 <- serial.test(VAR_2, lags.pt = 12, type = "PT.asymptotic")
+x.serial2
+
+### Cholesky decomposition of the Variance covariance matrix to get matrix B
+#install.packages("svars")
+library(svars)
+B_ltl <- id.chol(VAR_2, order_k = c(1, 2, 3, 4, 5, 6)) 
+B2 <- summary(B_ltl)
+IRF <- irf(B_ltl, impulse = "deltasr", response= "deltag", n.ahead = 8, boot = TRUE, ortho = TRUE)
 plot(IRF)
 stargazer(B1)
