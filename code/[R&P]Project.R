@@ -183,12 +183,14 @@ x.serial
 library(svars)
 B <- id.chol(VAR_1, order_k = c(1, 2, 3, 4, 5)) 
 B1 <- summary(B)
+class(B)
+
 IRF <- irf(B, impulse = "deltasr", response= "deltag", n.ahead = 8, boot = TRUE, ortho = TRUE)
 plot(IRF)
 stargazer(B1)
 
 bootsb <- wild.boot( B,
-                         design = "fixed",
+                         design = "recursive",
                          distr = "rademacher", n.ahead = 8,
                          nboot = 500,
                          nc = 1,
@@ -227,6 +229,7 @@ x.serial2
 library(svars)
 B_ltl <- id.chol(VAR_2, order_k = c(1, 2, 3, 4, 5, 6)) 
 B2 <- summary(B_ltl)
+class(B_ltl)
 IRF2 <- irf(B_ltl, impulse = "y3", response = c("y1", "y2", "y4", "y5", "y6"), n.ahead = 16, boot = TRUE, ortho = TRUE, cumulative = TRUE, ci = TRUE)
 plot(IRF2)
 stargazer(B1)
