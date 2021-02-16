@@ -5,8 +5,8 @@ library(urca)
 library(ggplot2)
 library(gsl)
 
-setwd("~/Desktop/WU/Master/3_WS2020:21/Data Science and Machine Learning/Github/rp-mcf/data")
-#setwd("~/Documents/Github/rp-mcf/data")   # Ajda /Users/ajdakovac/Documents ...
+#setwd("~/Desktop/WU/Master/3_WS2020:21/Data Science and Machine Learning/Github/rp-mcf/data")
+setwd("~/Documents/Github/rp-mcf/data")   # Ajda /Users/ajdakovac/Documents ...
 
 library(readxl)
 data1 <- read_excel("data.xlsx")
@@ -31,9 +31,10 @@ lstandards <- ts(data1$`Lending standards`, start = c(2004,1), frequency = 4)
 plot.ts(lstandards, col="red")
 
 ltl <- ts(data1$`Long term loans`, start = c(2004,1), frequency = 4)
-plot.ts(ltl, col="red", plot.type = "single", main = "Long Term Loans")
+plot.ts(ltl, col="red")
 
-plot(cbind(y, lmargins, lstandards, i, sr, ltl), main = "Time Series Data", col="lightblue")
+plot(cbind(y, lmargins, lstandards, i, sr, ltl), main = "Time Series Data")
+
 
 ################################ Dickey Fuller Tests for unit roots (different specifications)
 
@@ -144,28 +145,37 @@ adf.test(deltaltl) # => stationary now at 10% => I(1)
 #x<-cbind(deltay, deltai, deltalstandards, deltasr, deltalmargins) # is a covariance stationary process
 
 ### baseline model
-x1<-cbind(deltay, deltai, deltasr, deltalstandards, deltalmargins)
+x1 <- cbind(deltay, deltai, deltasr, deltalstandards, deltalmargins)
 plot.ts(x1, col="lightblue", main = "Covariance stationary vector x")
 
 
-### model with ltl
-x2<-cbind(deltay, deltai, deltasr, deltalstandards, deltaltl, deltalmargins)
+### extended model (with ltl)
+x2 <- cbind(deltay, deltai, deltasr, deltalstandards, deltaltl, deltalmargins)
 plot.ts(x2, col="lightblue", main = "Covariance stationary vector x")
+
+
+### robustness model (ltl instead of lstandards)
+x3 <- cbind(deltay, deltai, deltasr, deltaltl, deltalmargins)
+plot.ts(x3, col="lightblue", main = "Covariance stationary vector x")
+
+
+
 
 ############################################### VAR-system baseline model
 
-### select lags => won't work with stand. data => but not necessary as we choose 2
-x_lag <- VARselect(x1, lag.max = 4, type = "const")
-VARselect(x1) 
-x_lag$selection # p=8 lags according to AIC as well as HQ   # upon adding ltl, p=7
+### select lags => won't work with stand. data => but not necessary as we choose 2 (in line with the ref_paper)
+x1 <- VARselect(x, lag.max = 16, type = "const")
+VARselect(x) 
+x1$selection # p=8 lags according to AIC as well as HQ   # upon adding ltl, p=7
 
 
-VAR_1 <- VAR(x1, p = 2, type = "trend", season = NULL, exog = NULL) #VAR, use 2
+VAR_1 <- VAR(x1, p = 2, type = "trend", season = NULL, exog = NULL) #VAR
 as.matrix(Bcoef(VAR_1))
 VAR_1$varresult
 summary(VAR_1) # this is for the whole timeperiod
 
 plot.ts(resid(VAR_1))
+
 
 ### test for stability:
 max(roots(VAR_1)) # max eigenvalue < 1 which implies that our system is stable and stationary!
@@ -173,7 +183,7 @@ max(roots(VAR_1)) # max eigenvalue < 1 which implies that our system is stable a
 normality.test(VAR_1)
 
 
-x.serial <- serial.test(VAR_1, lags.pt = 2, type = "PT.adjusted")
+x.serial <- serial.test(VAR_1, lags.pt = 12, type = "PT.asymptotic")
 x.serial
 
 ### Cholesky decomposition of the Variance covariance matrix to get matrix B
@@ -183,40 +193,28 @@ B <- id.chol(VAR_1, order_k = c(1, 2, 3, 4, 5))
 B1 <- summary(B)
 class(B)
 
-IRF <- irf(B, impulse = "deltasr", response= "deltag", n.ahead = 8, boot = TRUE, ortho = TRUE, cumulative = TRUE, runs = 500)
+IRF <- irf(B, impulse = "deltasr", response= "deltag", n.ahead = 8, boot = TRUE, ortho = TRUE)
 plot(IRF)
 stargazer(B1)
 
 bootsb <- wild.boot( B,
-                         design = "recursive",
-                         distr = "rademacher", n.ahead = 8,
-                         nboot = 500,
-                         nc = 1,
-                         dd = NULL,
-                         signrest = NULL,
-                         itermax = 300,
-                         steptol = 200,
-                         iter2 = 50,
-                         rademacher = "deprecated"
+                     design = "recursive",
+                     distr = "rademacher", n.ahead = 8,
+                     nboot = 500,
+                     nc = 1,
+                     dd = NULL,
+                     signrest = NULL,
+                     itermax = 300,
+                     steptol = 200,
+                     iter2 = 50,
+                     rademacher = "deprecated"
 )
 
 plot(bootsb, lowerq = 0.16, upperq = 0.84)
 
 
-### another approach
-#VAR1_summary <- summary(VAR_1)
-#VAR1_summary$covres
 
-#orth <- t(chol(VAR1_summary$covres))
-
-#amat <- diag(6)
-#diag(amat) <- NA
-#svar.a <- SVAR(VAR_1, estmethod = "direct", Amat = amat)
-
-#oir <- irf(orth, impulse = "y3", n.ahead = 8, boot = TRUE, ortho = TRUE, cumulative = TRUE, runs = 500)
-#plot(oir)
-
-############################################### VAR-system second model
+############################################### VAR-system extended model
 
 VAR_2 <- VAR(x2, p = 2, type = "trend", season = NULL, exog = NULL) #VAR
 as.matrix(Bcoef(VAR_2))
@@ -247,16 +245,64 @@ stargazer(B1)
 
 
 bootsb_ltl <- wild.boot( B_ltl,
-           design = "fixed",
-           distr = "rademacher", n.ahead = 8,
-           nboot = 500,
-           nc = 1,
-           dd = NULL,
-           signrest = NULL,
-           itermax = 300,
-           steptol = 200,
-           iter2 = 50,
-           rademacher = "deprecated"
+                         design = "fixed",
+                         distr = "rademacher", n.ahead = 8,
+                         nboot = 500,
+                         nc = 1,
+                         dd = NULL,
+                         signrest = NULL,
+                         itermax = 300,
+                         steptol = 200,
+                         iter2 = 50,
+                         rademacher = "deprecated"
 )
 
 plot(bootsb_ltl, lowerq = 0.16, upperq = 0.84)
+
+
+
+
+############################################### VAR-system robustness model
+
+VAR_3 <- VAR(x3, p = 2, type = "trend", season = NULL, exog = NULL) #VAR
+as.matrix(Bcoef(VAR_3))
+VAR_3$varresult
+summary(VAR_3) # this is for the whole timeperiod
+
+plot.ts(resid(VAR_3))
+
+
+### test for stability:
+max(roots(VAR_3)) # max eigenvalue < 1 which implies that our system is stable and stationary!
+
+normality.test(VAR_3)
+
+
+x.serial3 <- serial.test(VAR_3, lags.pt = 12, type = "PT.asymptotic")
+x.serial3
+
+### Cholesky decomposition of the Variance covariance matrix to get matrix B
+# install.packages("svars")
+library(svars)
+B_rob <- id.chol(VAR_3, order_k = c(1, 2, 3, 4, 5)) 
+B3 <- summary(B_rob)
+class(B_rob)
+IRF3 <- irf(B_rob, impulse = "y3", response = c("y1", "y2", "y4", "y5"), n.ahead = 8, boot = TRUE, ortho = TRUE, cumulative = TRUE, ci = TRUE)
+plot(IRF3)
+stargazer(B3)
+
+
+bootsb_rob <- wild.boot( B_rob,
+                         design = "fixed",
+                         distr = "rademacher", n.ahead = 8,
+                         nboot = 500,
+                         nc = 1,
+                         dd = NULL,
+                         signrest = NULL,
+                         itermax = 300,
+                         steptol = 200,
+                         iter2 = 50,
+                         rademacher = "deprecated"
+)
+
+plot(bootsb_rob, lowerq = 0.16, upperq = 0.84)
