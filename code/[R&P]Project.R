@@ -31,10 +31,9 @@ lstandards <- ts(data1$`Lending standards`, start = c(2004,1), frequency = 4)
 plot.ts(lstandards, col="red")
 
 ltl <- ts(data1$`Long term loans`, start = c(2004,1), frequency = 4)
-plot.ts(ltl, col="red")
+plot.ts(ltl, col="red", plot.type = "single", main = "Long Term Loans")
 
-plot(cbind(y, lmargins, lstandards, i, sr, ltl), main = "Time Series Data")
-
+plot(cbind(y, lmargins, lstandards, i, sr, ltl), main = "Time Series Data", col="lightblue")
 
 ################################ Dickey Fuller Tests for unit roots (different specifications)
 
@@ -156,18 +155,17 @@ plot.ts(x2, col="lightblue", main = "Covariance stationary vector x")
 ############################################### VAR-system baseline model
 
 ### select lags => won't work with stand. data => but not necessary as we choose 2
-x1 <- VARselect(x, lag.max = 16, type = "const")
-VARselect(x) 
-x1$selection # p=8 lags according to AIC as well as HQ   # upon adding ltl, p=7
+x_lag <- VARselect(x1, lag.max = 4, type = "const")
+VARselect(x1) 
+x_lag$selection # p=8 lags according to AIC as well as HQ   # upon adding ltl, p=7
 
 
-VAR_1 <- VAR(x1, p = 2, type = "trend", season = NULL, exog = NULL) #VAR
+VAR_1 <- VAR(x1, p = 2, type = "trend", season = NULL, exog = NULL) #VAR, use 2
 as.matrix(Bcoef(VAR_1))
 VAR_1$varresult
 summary(VAR_1) # this is for the whole timeperiod
 
 plot.ts(resid(VAR_1))
-
 
 ### test for stability:
 max(roots(VAR_1)) # max eigenvalue < 1 which implies that our system is stable and stationary!
@@ -175,7 +173,7 @@ max(roots(VAR_1)) # max eigenvalue < 1 which implies that our system is stable a
 normality.test(VAR_1)
 
 
-x.serial <- serial.test(VAR_1, lags.pt = 12, type = "PT.asymptotic")
+x.serial <- serial.test(VAR_1, lags.pt = 2, type = "PT.adjusted")
 x.serial
 
 ### Cholesky decomposition of the Variance covariance matrix to get matrix B
@@ -185,7 +183,7 @@ B <- id.chol(VAR_1, order_k = c(1, 2, 3, 4, 5))
 B1 <- summary(B)
 class(B)
 
-IRF <- irf(B, impulse = "deltasr", response= "deltag", n.ahead = 8, boot = TRUE, ortho = TRUE)
+IRF <- irf(B, impulse = "deltasr", response= "deltag", n.ahead = 8, boot = TRUE, ortho = TRUE, cumulative = TRUE, runs = 500)
 plot(IRF)
 stargazer(B1)
 
@@ -204,6 +202,19 @@ bootsb <- wild.boot( B,
 
 plot(bootsb, lowerq = 0.16, upperq = 0.84)
 
+
+### another approach
+#VAR1_summary <- summary(VAR_1)
+#VAR1_summary$covres
+
+#orth <- t(chol(VAR1_summary$covres))
+
+#amat <- diag(6)
+#diag(amat) <- NA
+#svar.a <- SVAR(VAR_1, estmethod = "direct", Amat = amat)
+
+#oir <- irf(orth, impulse = "y3", n.ahead = 8, boot = TRUE, ortho = TRUE, cumulative = TRUE, runs = 500)
+#plot(oir)
 
 ############################################### VAR-system second model
 
